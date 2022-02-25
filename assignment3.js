@@ -88,9 +88,13 @@ export class Assignment3 extends Scene {
         const light_size = sun_rad ** 10;
         program_state.lights = [new Light(light_position, sun_color, light_size)];
 
-        let horizon_transform = Mat4.identity();
-        horizon_transform = horizon_transform.times(Mat4.translation(0,-60,0)).times(Mat4.rotation(Math.PI, 1, 0, 0)).times(Mat4.scale(50, 50, 10));
-        this.shapes.cube.draw(context, program_state, horizon_transform, this.materials.ground)
+        let ground_transform = Mat4.identity();
+        ground_transform = ground_transform.times(Mat4.translation(0,-60,0)).times(Mat4.rotation(Math.PI, 1, 0, 0)).times(Mat4.scale(50, 50, 10));
+        this.shapes.cube.draw(context, program_state, ground_transform, this.materials.ground)
+
+        let sunset_transform = Mat4.identity();
+        sunset_transform = sunset_transform.times(Mat4.translation(0,-6,-5)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(50, 50, 50));
+        this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset)
 
         let model_transform_sun = model_transform.times(Mat4.scale(sun_rad, sun_rad, sun_rad)).times(Mat4.translation(4,2,-4));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
