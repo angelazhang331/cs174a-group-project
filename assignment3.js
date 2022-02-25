@@ -85,7 +85,7 @@ export class Assignment3 extends Scene {
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
         // sun stuff
-        const sun_rad = 1;
+        const sun_rad = 3;
         const sun_color = yellow;
 
         const light_size = sun_rad ** 10;
@@ -99,9 +99,9 @@ export class Assignment3 extends Scene {
         sunset_transform = sunset_transform.times(Mat4.translation(0,-6,-5)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(50, 50, 50));
         this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset)
 
-        let model_transform_sun = model_transform.times(Mat4.rotation(Math.sin(t), 0, 0, 1))
+        let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1))
             .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
-            .times(Mat4.translation(0,6,0));
+            .times(Mat4.translation(0,2,-10));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
 
         let path_transform = Mat4.identity();
