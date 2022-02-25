@@ -40,6 +40,9 @@ export class Assignment3 extends Scene {
 
             ground: new Material(new defs.Phong_Shader(), {color: hex_color("#69ff4f"), ambient: 1, texture: new Texture("assets/grass.jpg", "NEAREST")}),
 
+            building_material: new Material(new defs.Phong_Shader(),
+                {ambient: 1, color: hex_color("#91672C")}),
+
 
         }
 
@@ -96,11 +99,44 @@ export class Assignment3 extends Scene {
         sunset_transform = sunset_transform.times(Mat4.translation(0,-6,-5)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(50, 50, 50));
         this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset)
 
-        let model_transform_sun = model_transform.times(Mat4.scale(sun_rad, sun_rad, sun_rad)).times(Mat4.translation(4,2,-4));
+        let model_transform_sun = model_transform.times(Mat4.rotation(Math.sin(t), 0, 0, 1))
+            .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
+            .times(Mat4.translation(0,6,0));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
 
+        let path_transform = Mat4.identity();
+        path_transform = path_transform.times(Mat4.translation(0,-55,0)).times(Mat4.rotation(Math.PI, 1, 0, 0)).times(Mat4.scale(3, 49, 4));
+        this.shapes.cube.draw(context, program_state, path_transform, this.materials.building_material);
 
+        let column1_transform = Mat4.identity();
+        column1_transform = model_transform.times(Mat4.translation(-10, -4, -12))
+            .times(Mat4.rotation(-3.6,1, 0, 0))
+            .times(Mat4.scale(1.6,9,1));
+        this.shapes.cube.draw(context, program_state, column1_transform, this.materials.building_material);
 
+        let column2_transform = Mat4.identity();
+        column2_transform = model_transform.times(Mat4.translation(10, -4, -12))
+            .times(Mat4.rotation(-3.6,1, 0, 0))
+            .times(Mat4.scale(1.6,9,1));
+        this.shapes.cube.draw(context, program_state, column2_transform, this.materials.building_material);
+
+        let side1_transform = Mat4.identity();
+        side1_transform = model_transform.times(Mat4.translation(20, -7, -12))
+            .times(Mat4.rotation(-3.6,1, 0, 0))
+            .times(Mat4.scale(8,4,1));
+        this.shapes.cube.draw(context, program_state, side1_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
+
+        let side2_transform = Mat4.identity();
+        side2_transform = model_transform.times(Mat4.translation(-20, -7, -12))
+            .times(Mat4.rotation(-3.6,1, 0, 0))
+            .times(Mat4.scale(8,4,1));
+        this.shapes.cube.draw(context, program_state, side2_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
+
+        let middle_transform = Mat4.identity();
+        middle_transform = model_transform.times(Mat4.translation(0, -6, -12))
+            .times(Mat4.rotation(-3.6,1, 0, 0))
+            .times(Mat4.scale(10,6,1));
+        this.shapes.cube.draw(context, program_state, middle_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
     }
 }
 
@@ -293,4 +329,3 @@ class Ring_Shader extends Shader {
         }`;
     }
 }
-
