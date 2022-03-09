@@ -23,6 +23,7 @@ export class Assignment3 extends Scene {
 
         };
 
+        this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(2));
         // *** Materials
         this.materials = {
             test: new Material(new defs.Phong_Shader(),
@@ -41,13 +42,17 @@ export class Assignment3 extends Scene {
 
             ground: new Material(new defs.Phong_Shader(), {color: hex_color("#69ff4f"), ambient: 1, texture: new Texture("assets/grass.jpg", "NEAREST")}),
 
-            building_material: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: hex_color("#91672C")}),
+            building_material: new Material(new defs.Phong_Shader(), {
+                ambient: 1,
+                //color: hex_color("#000000"),
+                color: hex_color("#91672C"),
+                texture: new Texture("assets/earth.gif", "LINEAR_MIPMAP_LINEAR")
+            }),
 
 
         }
 
-        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0));
+        this.initial_camera_location = Mat4.look_at(vec3(0, 0, 17), vec3(0, 0, 0), vec3(0, 1, 0));
     }
 
     make_control_panel() {
@@ -120,8 +125,14 @@ export class Assignment3 extends Scene {
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
-            .times(Mat4.scale(30,30,50));
+            .times(Mat4.scale(30,30,100));
         this.shapes.square.draw(context, program_state, ground_transform, this.materials.ground);
+
+        let ground_transform2 = Mat4.identity();
+        ground_transform2 = ground_transform2.times(Mat4.translation(0,-4,-20))
+            .times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(30,30,-50));
+        this.shapes.square.draw(context, program_state, ground_transform2, this.materials.ground);
 
         // let sunset_transform = Mat4.identity();
         // sunset_transform = sunset_transform.times(Mat4.translation(0,-6,-5)).times(Mat4.scale(50, 50, 50));
@@ -131,7 +142,7 @@ export class Assignment3 extends Scene {
         //     .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
         //     .times(Mat4.translation(0,10,-25));
         let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI/2 * Math.sin(t/2), 0, 0, 1))
-            .times(Mat4.translation(0,10,-45))
+            .times(Mat4.translation(0,20,-45))
             .times(Mat4.scale(sun_rad, sun_rad, sun_rad));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
 
@@ -156,13 +167,13 @@ export class Assignment3 extends Scene {
         let column1_transform = Mat4.identity();
         column1_transform = model_transform.times(Mat4.translation(-10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(1.6,9,3));
+            .times(Mat4.scale(1.6,11,3));
         this.shapes.cube.draw(context, program_state, column1_transform, this.materials.building_material);
 
         let column2_transform = Mat4.identity();
         column2_transform = model_transform.times(Mat4.translation(10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(1.6,9,3));
+            .times(Mat4.scale(1.6,11,3));
         this.shapes.cube.draw(context, program_state, column2_transform, this.materials.building_material);
 
         let side1_transform = Mat4.identity();
