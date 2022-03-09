@@ -84,14 +84,14 @@ export class Assignment3 extends Scene {
         // const light_position = vec4(0, 10, -30, 1);
         let light_position = this.light_position;
         this.light_position = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1))
-            .times(Mat4.scale(5, 5, 5))
-            .times(Mat4.translation(0,10,-25))
-            .times(vec4(0, 10, -30, 1));
+            .times(Mat4.scale(3, 3, 3))
+            .times(Mat4.translation(0,10,-45))
+            .times(vec4(0, 10, -45, 1));
         // The parameters of the Light are: position, color, size
         // const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
         // sun stuff
-        const sun_rad = 5;
+        const sun_rad = 3;
         const sun_color = yellow;
 
         let light_color = this.light_color;
@@ -111,18 +111,28 @@ export class Assignment3 extends Scene {
         const light_size = sun_rad ** 10;
         program_state.lights = [new Light(this.light_position, this.light_color, light_size)];
 
+        let sunset_transform = Mat4.identity();
+        sunset_transform = model_transform.times(Mat4.translation(0,0,-50))
+            .times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(50,30,0));
+            //.times(Mat4.translation(0,0,0));
+        this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
+
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
-            .times(Mat4.scale(30,30,30));
-        this.shapes.square.draw(context, program_state, ground_transform, this.materials.ground)
+            .times(Mat4.scale(30,30,50));
+        this.shapes.square.draw(context, program_state, ground_transform, this.materials.ground);
 
         // let sunset_transform = Mat4.identity();
         // sunset_transform = sunset_transform.times(Mat4.translation(0,-6,-5)).times(Mat4.scale(50, 50, 50));
         // this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset)
 
-        let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1))
-            .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
-            .times(Mat4.translation(0,10,-25));
+        // let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1))
+        //     .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
+        //     .times(Mat4.translation(0,10,-25));
+        let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI/2 * Math.sin(t/2), 0, 0, 1))
+            .times(Mat4.translation(0,10,-45))
+            .times(Mat4.scale(sun_rad, sun_rad, sun_rad));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
 
         //let light_position = this.light_position;
