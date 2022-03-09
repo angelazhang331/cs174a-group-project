@@ -23,7 +23,7 @@ export class Assignment3 extends Scene {
 
         };
 
-        this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(2));
+        this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
         // *** Materials
         this.materials = {
             test: new Material(new defs.Phong_Shader(),
@@ -40,6 +40,21 @@ export class Assignment3 extends Scene {
                 ambient: 0.5,
             }),
 
+            day: new Material(new defs.Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/resized-image-Promo.jpeg", "NEAREST")}),
+
+            afternoon: new Material(new defs.Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/resized-image-Promo-2.jpeg", "NEAREST")}),
+
+            night: new Material(new defs.Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/resized-image-Promo-3.jpeg", "NEAREST")}),
+
             ground: new Material(new defs.Phong_Shader(), {color: hex_color("#69ff4f"), ambient: 1, texture: new Texture("assets/grass.jpg", "NEAREST")}),
 
             building_material: new Material(new defs.Phong_Shader(), {
@@ -53,11 +68,62 @@ export class Assignment3 extends Scene {
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 17), vec3(0, 0, 0), vec3(0, 1, 0));
+
+        this.isDay = false;
+        this.isAfternoon = false;
+        this.isNight = false;
+
     }
+
+    getGradientColor = function(start_color, end_color, percent) {
+        // strip the leading # if it's there
+        start_color = start_color.replace(/^\s*#|\s*$/g, '');
+        end_color = end_color.replace(/^\s*#|\s*$/g, '');
+
+        // convert 3 char codes --> 6, e.g. `E0F` --> `EE00FF`
+        if(start_color.length == 3){
+            start_color = start_color.replace(/(.)/g, '$1$1');
+        }
+
+        if(end_color.length == 3){
+            end_color = end_color.replace(/(.)/g, '$1$1');
+        }
+
+        // get colors
+        var start_red = parseInt(start_color.substr(0, 2), 16),
+            start_green = parseInt(start_color.substr(2, 2), 16),
+            start_blue = parseInt(start_color.substr(4, 2), 16);
+
+        var end_red = parseInt(end_color.substr(0, 2), 16),
+            end_green = parseInt(end_color.substr(2, 2), 16),
+            end_blue = parseInt(end_color.substr(4, 2), 16);
+
+        // calculate new color
+        var diff_red = end_red - start_red;
+        var diff_green = end_green - start_green;
+        var diff_blue = end_blue - start_blue;
+
+        diff_red = ( (diff_red * percent) + start_red ).toString(16).split('.')[0];
+        diff_green = ( (diff_green * percent) + start_green ).toString(16).split('.')[0];
+        diff_blue = ( (diff_blue * percent) + start_blue ).toString(16).split('.')[0];
+
+        // ensure 2 digits by color
+        if( diff_red.length == 1 ) diff_red = '0' + diff_red
+        if( diff_green.length == 1 ) diff_green = '0' + diff_green
+        if( diff_blue.length == 1 ) diff_blue = '0' + diff_blue
+
+        return '#' + diff_red + diff_green + diff_blue;
+    };
 
     make_control_panel() {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
         this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
+        this.new_line();
+        this.key_triggered_button("Day", ["Control", "d"], () => this.isDay = !this.isDay);
+        this.new_line();
+        this.key_triggered_button("Afternoon", ["Control", "a"], () => this.isAfternoon = !this.isAfternoon);
+        this.new_line();
+        this.key_triggered_button("Night", ["Control", "n"], () => this.isNight = !this.isNight);
         this.new_line();
         // this.key_triggered_button("Attach to planet 1", ["Control", "1"], () => this.attached = () => this.planet_1);
         // this.key_triggered_button("Attach to planet 2", ["Control", "2"], () => this.attached = () => this.planet_2);
@@ -119,9 +185,24 @@ export class Assignment3 extends Scene {
         let sunset_transform = Mat4.identity();
         sunset_transform = model_transform.times(Mat4.translation(0,0,-50))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(50,30,0));
+            .times(Mat4.scale(55,30,0));
             //.times(Mat4.translation(0,0,0));
-        this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
+        if (this.isDay)
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
+        }
+        else if (this.isAfternoon)
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
+        }
+        else if (this.isNight)
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
+        }
+        else
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
+        }
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
