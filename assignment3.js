@@ -17,19 +17,17 @@ export class Assignment3 extends Scene {
             sphere: new defs.Subdivision_Sphere(4),
             circle: new defs.Regular_2D_Polygon(1, 15),
             cube: new defs.Cube(3,3),
+            cube2: new defs.Cube(3,3),
             square: new defs.Square(),
             sun: new defs.Subdivision_Sphere(4),
 
 
         };
 
-<<<<<<< HEAD
         this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
-=======
         this.shapes.square.arrays.texture_coord.forEach(v => v.scale_by(8));
-       this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(-3.5));
+       this.shapes.cube2.arrays.texture_coord.forEach(v => v.scale_by(-3.5));
 
->>>>>>> f7c59c46fb9cf74f9c138fa58dd59675292e3579
         // *** Materials
         this.materials = {
             test: new Material(new defs.Phong_Shader(),
@@ -261,31 +259,31 @@ export class Assignment3 extends Scene {
         column1_transform = model_transform.times(Mat4.translation(-10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(1.6,11,3));
-        this.shapes.cube.draw(context, program_state, column1_transform, this.materials.building_material);
+        this.shapes.cube2.draw(context, program_state, column1_transform, this.materials.building_material);
 
         let column2_transform = Mat4.identity();
         column2_transform = model_transform.times(Mat4.translation(10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(1.6,11,3));
-        this.shapes.cube.draw(context, program_state, column2_transform, this.materials.building_material);
+        this.shapes.cube2.draw(context, program_state, column2_transform, this.materials.building_material);
 
         let side1_transform = Mat4.identity();
         side1_transform = model_transform.times(Mat4.translation(18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube.draw(context, program_state, side1_transform, this.materials.building_material);
+        this.shapes.cube2.draw(context, program_state, side1_transform, this.materials.building_material);
 
         let side2_transform = Mat4.identity();
         side2_transform = model_transform.times(Mat4.translation(-18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube.draw(context, program_state, side2_transform, this.materials.building_material);
+        this.shapes.cube2.draw(context, program_state, side2_transform, this.materials.building_material);
 
         let middle_transform = Mat4.identity();
         middle_transform = model_transform.times(Mat4.translation(0, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(10,7,6));
-        this.shapes.cube.draw(context, program_state, middle_transform, this.materials.building_material2);
+        this.shapes.cube2.draw(context, program_state, middle_transform, this.materials.building_material2);
     }
 }
 
