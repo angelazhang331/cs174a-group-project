@@ -23,7 +23,9 @@ export class Assignment3 extends Scene {
 
         };
 
-        this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(2));
+        this.shapes.square.arrays.texture_coord.forEach(v => v.scale_by(8));
+       this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(-3.5));
+
         // *** Materials
         this.materials = {
             test: new Material(new defs.Phong_Shader(),
@@ -40,13 +42,19 @@ export class Assignment3 extends Scene {
                 ambient: 0.5,
             }),
 
-            ground: new Material(new defs.Phong_Shader(), {color: hex_color("#69ff4f"), ambient: 1, texture: new Texture("assets/grass.jpg", "NEAREST")}),
+            ground: new Material(new defs.Textured_Phong(), {color: hex_color("#000000"), specularity: 1, ambient: 1, texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
 
-            building_material: new Material(new defs.Phong_Shader(), {
+            building_material: new Material(new defs.Textured_Phong(), {
                 ambient: 1,
-                //color: hex_color("#000000"),
-                color: hex_color("#91672C"),
-                texture: new Texture("assets/earth.gif", "LINEAR_MIPMAP_LINEAR")
+                specularity: 1,
+                color: hex_color("#000000"),
+                texture: new Texture("assets/brks.jpg", "NEAREST")
+            }),
+            building_material2: new Material(new defs.Textured_Phong(), {
+                ambient: 1,
+                specularity: 1,
+                color: hex_color("#000000"),
+                texture: new Texture("assets/brks.jpeg", "NEAREST")
             }),
 
 
@@ -180,19 +188,19 @@ export class Assignment3 extends Scene {
         side1_transform = model_transform.times(Mat4.translation(18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube.draw(context, program_state, side1_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
+        this.shapes.cube.draw(context, program_state, side1_transform, this.materials.building_material);
 
         let side2_transform = Mat4.identity();
         side2_transform = model_transform.times(Mat4.translation(-18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube.draw(context, program_state, side2_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
+        this.shapes.cube.draw(context, program_state, side2_transform, this.materials.building_material);
 
         let middle_transform = Mat4.identity();
         middle_transform = model_transform.times(Mat4.translation(0, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(10,7,6));
-        this.shapes.cube.draw(context, program_state, middle_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
+        this.shapes.cube.draw(context, program_state, middle_transform, this.materials.building_material2);
     }
 }
 
