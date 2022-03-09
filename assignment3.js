@@ -179,19 +179,19 @@ export class Assignment3 extends Scene {
         let side1_transform = Mat4.identity();
         side1_transform = model_transform.times(Mat4.translation(18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(8,4,6));
+            .times(Mat4.scale(8,4.5,6));
         this.shapes.cube.draw(context, program_state, side1_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
 
         let side2_transform = Mat4.identity();
         side2_transform = model_transform.times(Mat4.translation(-18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(8,4,6));
+            .times(Mat4.scale(8,4.5,6));
         this.shapes.cube.draw(context, program_state, side2_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
 
         let middle_transform = Mat4.identity();
         middle_transform = model_transform.times(Mat4.translation(0, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(10,6,6));
+            .times(Mat4.scale(10,7,6));
         this.shapes.cube.draw(context, program_state, middle_transform, this.materials.building_material.override({color: hex_color("#966a2d")}));
     }
 }
