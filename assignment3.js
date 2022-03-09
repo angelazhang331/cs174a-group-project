@@ -81,16 +81,23 @@ export class Assignment3 extends Scene {
         const white = hex_color("#ffffff");
 
 
-        const light_position = vec4(4, 4, 4, 1);
+        const light_position = vec4(0, 10, -30, 1);
         // The parameters of the Light are: position, color, size
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
         // sun stuff
-        const sun_rad = 3;
+        const sun_rad = 20;
         const sun_color = yellow;
 
-        const light_size = sun_rad ** 10;
-        program_state.lights = [new Light(light_position, sun_color, light_size)];
+        let light_color = color(
+            1.667 + Math.sin(t/500) / 3,
+            1.667 + Math.sin(t/1500) / 3,
+            0.667 + Math.sin(t/3500) / 3,
+            1
+        );
+
+        const light_size = (sun_rad*3) ** 10;
+        program_state.lights = [new Light(light_position, light_color, light_size)];
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
@@ -103,8 +110,22 @@ export class Assignment3 extends Scene {
 
         let model_transform_sun = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1))
             .times(Mat4.scale(sun_rad, sun_rad, sun_rad))
-            .times(Mat4.translation(0,2,-10));
+            .times(Mat4.translation(0,10,-30));
         this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
+
+        //let light_position = this.light_position;
+        //let light_color = this.light_color;
+
+        //this.light_position = model_transform.times(Mat4.rotation(Math.PI / 2 * Math.sin(t/2), 0, 0, 1));
+        // const light_position = vec4(0, 10, -30, 1);
+        // this.light_color = color(
+        //     0.667 + Math.sin(t/500) / 3,
+        //     0.667 + Math.sin(t/1500) / 3,
+        //     0.667 + Math.sin(t/3500) / 3,
+        //     1
+        // );
+        // const light_size = (sun_rad*3) ** 10;
+        // program_state.lights = [new Light(light_position, sun_color, light_size)];
 
         let path_transform = Mat4.identity();
         path_transform = path_transform.times(Mat4.translation(0,-3.9,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(4, 14, 0));
