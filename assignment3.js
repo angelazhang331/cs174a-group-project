@@ -17,23 +17,26 @@ export class Assignment3 extends Scene {
             torus: new defs.Torus(15, 15),
             torus2: new defs.Torus(3, 15),
             sphere: new defs.Subdivision_Sphere(4),
-            circle: new defs.Regular_2D_Polygon(1, 15),
+            circle: new defs.Regular_2D_Polygon(1, 25),
             cube: new defs.Cube(3,3),
             cube2: new defs.Cube(3,3),
             square: new defs.Square(),
+            square2: new defs.Square(),
             sun: new defs.Subdivision_Sphere(4),
             plant: new defs.Subdivision_Sphere(4),
+
         };
 
         this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
         this.shapes.square.arrays.texture_coord.forEach(v => v.scale_by(8));
         this.shapes.cube2.arrays.texture_coord.forEach(v => v.scale_by(-1));
         this.shapes.plant.arrays.texture_coord.forEach(v => v.scale_by(-2));
+        this.shapes.square2.arrays.texture_coord.forEach(v => v.scale_by(10));
 
         // *** Materials
         this.materials = {
             test: new Material(new defs.Phong_Shader(),
-                {ambient: .4, diffusivity: .6, color: hex_color("#ffffff")}),
+                {ambient: .4, diffusivity: .6, color: hex_color("#000000")}),
             test2: new Material(new Gouraud_Shader(),
                 {ambient: .4, diffusivity: .6, color: hex_color("#992828")}),
             ring: new Material(new Ring_Shader()),
@@ -80,6 +83,13 @@ export class Assignment3 extends Scene {
                 specularity: 1,
                 color: hex_color("#1e1c1c"),
                 texture: new Texture("assets/roses_edit.jpg", "NEAREST")
+            }),
+
+            dirt_material: new Material(new defs.Textured_Phong(), {
+                ambient: 1,
+                specularity: 1,
+                color: hex_color("#000000"),
+                texture: new Texture("assets/dirt_resized.jpeg", "NEAREST")
             }),
 
         }
@@ -225,7 +235,7 @@ export class Assignment3 extends Scene {
 
         let path_transform = Mat4.identity();
         path_transform = path_transform.times(Mat4.translation(0,-3.9,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0)).times(Mat4.scale(4, 14, 0));
-        this.shapes.square.draw(context, program_state, path_transform, this.materials.building_material);
+        this.shapes.square2.draw(context, program_state, path_transform, this.materials.dirt_material);
 
         let column1_transform = Mat4.identity();
         column1_transform = column1_transform.times(Mat4.translation(-10, -4, -14))
@@ -345,6 +355,132 @@ export class Assignment3 extends Scene {
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(13.7,-3.5,5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        // end of plant stuff
+
+        //inside of royce columns
+        let column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(0,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(2,4,6));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(6,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(1,3,4));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-6,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(1,3,4));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        //side building blackout windows
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-16,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = Mat4.identity();
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-19,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-13,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-22,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-24,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(16,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = Mat4.identity();
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(19,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(13,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(22,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(24,-4,-11.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.75,1.5,1.5));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        // column's blackout windows
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-10,-3,-10.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.65,1,1));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(-10,2,-10.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.65,1,1));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(10,-3,-10.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.65,1,1));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
+        column_transform = Mat4.identity();
+        column_transform = column_transform.times(Mat4.translation(10,2,-10.9)).times(Mat4.rotation(Math.PI, 1, 0, 0))
+            .times(Mat4.scale(0.65,1,1));
+        this.shapes.square.draw(context, program_state, column_transform, this.materials.test);
+        column_transform = column_transform.times(Mat4.translation(0,-0.4,0))
+        this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
+
 
     }
 }
