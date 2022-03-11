@@ -39,13 +39,13 @@ export class Assignment3 extends Scene {
         this.shapes = {
             sphere: new defs.Subdivision_Sphere(4),
             circle: new defs.Regular_2D_Polygon(1, 25),
-            cube: new defs.Cube(3,3),
-            cube2: new defs.Cube(3,3),
+            cube: new Cube(3,3),
+            cube2: new Cube(3,3),
             square: new defs.Square(),
             square2: new defs.Square(),
             sun: new defs.Subdivision_Sphere(4),
             plant: new defs.Subdivision_Sphere(4),
-            square_2d: new defs.Square(),
+            square_2d: new Square(),
         };
 
         this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
@@ -80,14 +80,17 @@ export class Assignment3 extends Scene {
                 texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
         }
 
+        // For the first pass
+        this.pure = new Material(new Color_Phong_Shader(), {
+        })
         // grass floor material
-        this.floor1 = new Material(new Shadow_Textured_Phong_Shader(), {
+        this.floor1 = new Material(new Shadow_Textured_Phong_Shader(1), {
             color: hex_color("#000000"), ambient: 1, diffusivity: 1, specularity: 0.4, smoothness: 64,
             color_texture: new Texture("assets/grasstxt.jpeg"),
             light_depth_texture: null
         });
         // dirt floor material
-        this.floor2 = new Material(new Shadow_Textured_Phong_Shader(), {
+        this.floor2 = new Material(new Shadow_Textured_Phong_Shader(1), {
             color: hex_color("#888888"), ambient: 1, diffusivity: 1, specularity: 0.4, smoothness: 64,
             color_texture: new Texture("assets/dirt_resized.jpeg"),
             light_depth_texture: null
@@ -100,14 +103,14 @@ export class Assignment3 extends Scene {
             specularity: 0
         });
         // building texture
-        this.building = new Material(new Shadow_Textured_Phong_Shader(), {
+        this.building = new Material(new Shadow_Textured_Phong_Shader(1), {
             color: color(.5, .5, .5, 1),
             ambient: .4, diffusivity: .5, specularity: .5,
             color_texture: new Texture("assets/brks.jpg"),
             light_depth_texture: null
         });
         // plant texture
-        this.plants = new Material(new Shadow_Textured_Phong_Shader(), {
+        this.plants = new Material(new Shadow_Textured_Phong_Shader(1), {
             color: hex_color("#000000"),
             ambient: .4, diffusivity: .5, specularity: .5,
             color_texture: new Texture("assets/roses_edit.jpg"),
@@ -131,7 +134,12 @@ export class Assignment3 extends Scene {
 
     make_control_panel() {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
-        this.key_triggered_button("View entire scene", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
+        this.key_triggered_button("View entire scene", ["Control", "0"], () => {
+            this.attached = () => this.initial_camera_location;
+            this.isDay = false;
+            this.isNight = false;
+            this.isAfternoon = false;
+        });
         this.new_line();
         this.key_triggered_button("Day", ["Control", "d"], () => {
             this.isDay = true;
@@ -241,40 +249,25 @@ export class Assignment3 extends Scene {
         // shadow_pass: true if this is the second pass that draw the shadow.
         // draw_light_source: true if we want to draw the light source.
         // draw_shadow: true if we want to draw the shadow
-
-        // STAYS IN DISPLAY
-        const time = program_state.animation_time / 1000;
-        // const gl = context.context;
-
-        // sun path parametric equations
-        let sun_y = Math.abs(20 * Math.sin(time/3 + Math.PI/2));
-        let sun_x = 35 * Math.sin(time/3);
-
         let light_position = this.light_position;
-        if (this.isDay) {
-            this.light_position = vec4(35 * Math.sin(12/3), Math.abs(20 * Math.sin(12/3 + Math.PI/2)), -45, 1);
-        }
-        else if (this.isAfternoon) {
-            this.light_position = vec4(35 * Math.sin(9/3), Math.abs(20 * Math.sin(9/3 + Math.PI/2)), -45, 1);
-        }
-        else if (this.isNight) {
-            this.light_position = vec4(35 * Math.sin(6/3), Math.abs(20 * Math.sin(6/3 + Math.PI/2)), -45, 1);
-        }
-        else {
-            this.light_position = vec4(this.sun_x, this.sun_y, -45, 1);
-        }
-        this.light_color = hex_color("#fac91a");
+        let light_color = this.light_color;
+        const t = program_state.animation_time;
 
-        const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
         // start replacement
         program_state.draw_shadow = draw_shadow;
 
         if (draw_light_source && shadow_pass) {
-            let draw_transform = Mat4.identity();
-            draw_transform = draw_transform.times(Mat4.translation(light_position[0], light_position[1], light_position[2]))
-                .times(Mat4.scale(4,4,4));
-            this.shapes.sphere.draw(context, program_state, draw_transform, this.light_src.override({color: this.light_color}));
+            this.shapes.sphere.draw(context, program_state,
+                Mat4.translation(light_position[0], light_position[1], light_position[2]).times(Mat4.scale(4,4,4)),
+                this.light_src.override({color: light_color}));
+        }
+
+        for (let i of [-1, 1]) { // Spin the 3D model shapes as well.
+            const model_transform = Mat4.translation(2 * i, 3, 0)
+                .times(Mat4.rotation(t / 1000, -1, 2, 0))
+                .times(Mat4.rotation(-Math.PI / 2, 1, 0, 0));
+            // this.shapes.teapot.draw(context, program_state, model_transform, shadow_pass? this.stars : this.pure);
         }
 
         // ground or grass
@@ -282,14 +275,14 @@ export class Assignment3 extends Scene {
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0))
             .times(Mat4.rotation(Math.PI/2, 1, 0, 0))
             .times(Mat4.scale(30,30,100));
-        this.shapes.square.draw(context, program_state, ground_transform, shadow_pass? this.floor1 : this.materials.day);
+        this.shapes.square.draw(context, program_state, ground_transform, shadow_pass? this.floor1 : this.pure);
 
         // path on the ground
         let path_transform = Mat4.identity();
         path_transform = path_transform.times(Mat4.translation(0,-3.9,0))
             .times(Mat4.rotation(Math.PI/2, 1, 0, 0))
             .times(Mat4.scale(4, 14, 0));
-        this.shapes.square2.draw(context, program_state, path_transform, shadow_pass? this.floor2 : this.materials.day);
+        this.shapes.square2.draw(context, program_state, path_transform, shadow_pass? this.floor2 : this.pure);
 
         // sunset
         let sunset_transform = Mat4.identity();
@@ -321,31 +314,31 @@ export class Assignment3 extends Scene {
         column1_transform = column1_transform.times(Mat4.translation(-10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(1.6,11,3));
-        this.shapes.cube2.draw(context, program_state, column1_transform, this.building);
+        this.shapes.cube2.draw(context, program_state, column1_transform, shadow_pass? this.building : this.pure);
 
         let column2_transform = Mat4.identity();
         column2_transform = column2_transform.times(Mat4.translation(10, -4, -14))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(1.6,11,3));
-        this.shapes.cube2.draw(context, program_state, column2_transform, this.building);
+        this.shapes.cube2.draw(context, program_state, column2_transform, shadow_pass? this.building : this.pure);
 
         let side1_transform = Mat4.identity();
         side1_transform = side1_transform.times(Mat4.translation(18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube2.draw(context, program_state, side1_transform, this.building);
+        this.shapes.cube2.draw(context, program_state, side1_transform, shadow_pass? this.building : this.pure);
 
         let side2_transform = Mat4.identity();
         side2_transform = side2_transform.times(Mat4.translation(-18, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(8,4.5,6));
-        this.shapes.cube2.draw(context, program_state, side2_transform, this.building);
+        this.shapes.cube2.draw(context, program_state, side2_transform, shadow_pass? this.building : this.pure);
 
         let middle_transform = Mat4.identity();
         middle_transform = middle_transform.times(Mat4.translation(0, -4, -18))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(10,7,6));
-        this.shapes.cube2.draw(context, program_state, middle_transform, this.building);
+        this.shapes.cube2.draw(context, program_state, middle_transform, shadow_pass? this.building : this.pure);
 
         //plant stuff
         const plant_rad = 0.5;
@@ -616,12 +609,7 @@ export class Assignment3 extends Scene {
             this.light_position = vec4(this.sun_x, this.sun_y, -45, 1);
         }
         // The color of the light
-        this.light_color = color(
-            0.667 + Math.sin(t/500) / 3,
-            0.667 + Math.sin(t/1500) / 3,
-            0.667 + Math.sin(t/3500) / 3,
-            1
-        );
+        this.light_color = hex_color("#fac91a");
 
         this.light_view_target = vec4(0, 0, 0, 1);
         this.light_field_of_view = 130 * Math.PI / 180; // 130 degree
@@ -648,7 +636,7 @@ export class Assignment3 extends Scene {
         const light_view_mat = Mat4.look_at(
             vec3(this.light_position[0], this.light_position[1], this.light_position[2]),
             vec3(this.light_view_target[0], this.light_view_target[1], this.light_view_target[2]),
-            vec3(1, 0, 0), // assume the light to target will have a up dir of +y, maybe need to change according to your case
+            vec3(0, 1, 0), // assume the light to target will have a up dir of +y, maybe need to change according to your case
         );
         const light_proj_mat = Mat4.perspective(this.light_field_of_view, 1, 0.5, 500);
         // Bind the Depth Texture Buffer
@@ -670,14 +658,13 @@ export class Assignment3 extends Scene {
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 0.5, 500);
         this.render_scene(context, program_state, true,true, true);
 
-
         // Step 3: display the textures
-        this.shapes.square_2d.draw(context, program_state,
-            Mat4.translation(-.99, .08, 0).times(
-                Mat4.scale(0.5, 0.5 * gl.canvas.width / gl.canvas.height, 1)
-            ),
-            this.depth_tex.override({texture: this.lightDepthTexture})
-        );
+        // this.shapes.square_2d.draw(context, program_state,
+        //     Mat4.translation(-.99, .08, 0).times(
+        //         Mat4.scale(0.5, 0.5 * gl.canvas.width / gl.canvas.height, 1)
+        //     ),
+        //     this.depth_tex.override({texture: this.lightDepthTexture})
+        // );
     }
 }
 
