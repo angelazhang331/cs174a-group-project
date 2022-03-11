@@ -152,11 +152,24 @@ export class Assignment3 extends Scene {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
         this.key_triggered_button("View entire scene", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
         this.new_line();
-        this.key_triggered_button("Day", ["Control", "d"], () => {this.isDay = !this.isDay});
+        this.key_triggered_button("Day", ["Control", "d"], () => {
+            this.isDay = true;
+            this.isNight = false;
+            this.isAfternoon = false;
+
+        });
         this.new_line();
-        this.key_triggered_button("Afternoon", ["Control", "a"], () => {this.isAfternoon = !this.isAfternoon});
+        this.key_triggered_button("Afternoon", ["Control", "a"], () => {
+            this.isDay = false;
+            this.isNight = false;
+            this.isAfternoon = true;
+        });
         this.new_line();
-        this.key_triggered_button("Night", ["Control", "n"], () => {this.isNight = !this.isNight});
+        this.key_triggered_button("Night", ["Control", "n"], () => {
+            this.isDay = false;
+            this.isNight = true;
+            this.isAfternoon = false;
+        });
         this.new_line();
         this.key_triggered_button("Attach to plant 1", ["Control", "1"], () => this.attached = () => this.plant_1);
         // this.new_line();
@@ -495,31 +508,31 @@ export class Assignment3 extends Scene {
         this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
 
 
-        if (!this.hover) {
+        //if (!this.hover) {
             if (this.isDay) {
-                if (!this.hover) {
+                //if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
                     //this.isDay = !this.isDay;
-                }
+                //}
             }
             else if (this.isAfternoon) {
-                if (!this.hover) {
+                //if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
                     //this.isAfternoon = !this.isAfternoon;
-                }
+                //}
             }
             else if (this.isNight) {
-                if (!this.hover) {
+                //if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
                     //this.isNight = !this.isNight;
 
-                }
+                //}
             } else {
-                if (!this.hover) {
+                //if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
-                }
+                //}
             }
-        }
+       // }
 
         // camera positions
         if (this.attached)
