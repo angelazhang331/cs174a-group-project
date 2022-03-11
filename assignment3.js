@@ -22,11 +22,13 @@ export class Assignment3 extends Scene {
             cube2: new defs.Cube(3,3),
             square: new defs.Square(),
             sun: new defs.Subdivision_Sphere(4),
+            plant: new defs.Subdivision_Sphere(4),
         };
 
         this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
         this.shapes.square.arrays.texture_coord.forEach(v => v.scale_by(8));
         this.shapes.cube2.arrays.texture_coord.forEach(v => v.scale_by(-1));
+        this.shapes.plant.arrays.texture_coord.forEach(v => v.scale_by(-2));
 
         // *** Materials
         this.materials = {
@@ -67,11 +69,17 @@ export class Assignment3 extends Scene {
                 color: hex_color("#000000"),
                 texture: new Texture("assets/brks.jpg", "NEAREST")
             }),
-            building_material2: new Material(new Texture_Rotate(), {
+            building_material2: new Material(new defs.Textured_Phong(), {
                 ambient: 1,
                 specularity: 1,
                 color: hex_color("#1e1c1c"),
                 texture: new Texture("assets/brks.jpeg", "NEAREST")
+            }),
+            plant_material: new Material(new defs.Textured_Phong(), {
+                ambient: 1,
+                specularity: 1,
+                color: hex_color("#1e1c1c"),
+                texture: new Texture("assets/roses_edit.jpg", "NEAREST")
             }),
 
         }
@@ -165,6 +173,9 @@ export class Assignment3 extends Scene {
         const sun_rad = 4;
         const sun_color = yellow;
 
+        const plant_rad = 0.5;
+
+
         this.light_color = color(
             1.667 + Math.sin(t/500) / 3,
             1.667 + Math.sin(t/1500) / 3,
@@ -245,6 +256,96 @@ export class Assignment3 extends Scene {
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(10,7,6));
         this.shapes.cube2.draw(context, program_state, middle_transform, this.materials.building_material2);
+
+        //plant stuff
+        let plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(-10,-3.5,2)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        let plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(-9.5,-3.5,1.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        let plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(-8.7,-3.5,2.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(7,-3.5,2)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(6.5,-3.5,1.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(5.7,-3.5,2.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(10,-3.5,10)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(9.5,-3.5,9.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(8.7,-3.5,10.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(13.8,-3.5,-4)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(14.5,-3.5,-4.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(15.3,-3.5,-5.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(-13.8,-3.5,-4)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(-14.5,-3.5,-4.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(-15.3,-3.5,-5.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(-10,-3.5,-7)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(-9.5,-3.5,-6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(-8.7,-3.5,-5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(-15,-3.5,7)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(-14.5,-3.5,6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(-13.7,-3.5,5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
+        plant_transform = Mat4.identity();
+        plant_transform = plant_transform.times(Mat4.translation(15,-3.5,7)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
+            .times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform2 = Mat4.identity();
+        plant_transform = plant_transform2.times(Mat4.translation(14.5,-3.5,6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+        plant_transform3 = Mat4.identity();
+        plant_transform = plant_transform3.times(Mat4.translation(13.7,-3.5,5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
+        this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
+
     }
 }
 
