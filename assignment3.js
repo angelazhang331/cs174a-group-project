@@ -245,16 +245,20 @@ export class Assignment3 extends Scene {
         // draw_light_source: true if we want to draw the light source.
         // draw_shadow: true if we want to draw the shadow
 
+        // STAYS IN DISPLAY
+        const time = program_state.animation_time / 1000;
+        const gl = context.context;
+
         // sun path parametric equations
-        let sun_y = Math.abs(20 * Math.sin(t/3 + Math.PI/2));
-        let sun_x = 35 * Math.sin(t/3);
+        let sun_y = Math.abs(20 * Math.sin(time/3 + Math.PI/2));
+        let sun_x = 35 * Math.sin(time/3);
 
         let light_position = this.light_position;
         this.light_position = vec4(sun_x, sun_y, -45, 1);
         this.light_color = color(
-            1.667 + Math.sin(t/500) / 3,
-            1.667 + Math.sin(t/1500) / 3,
-            0.667 + Math.sin(t/3500) / 3,
+            1.667 + Math.sin(time/500) / 3,
+            1.667 + Math.sin(time/1500) / 3,
+            0.667 + Math.sin(time/3500) / 3,
             1
         );
 
@@ -267,7 +271,7 @@ export class Assignment3 extends Scene {
             let draw_transform = Mat4.identity();
             draw_transform = draw_transform.times(Mat4.translation(light_position[0], light_position[1], light_position[2]))
                 .times(Mat4.scale(.5,.5,.5));
-            this.shapes.sphere.draw(context, program_state, draw_transform, this.light_source.override({color: this.light_color}));
+            this.shapes.sphere.draw(context, program_state, draw_transform, this.materials.light_source.override({color: this.light_color}));
         }
 
         // ground or grass
@@ -582,18 +586,32 @@ export class Assignment3 extends Scene {
         }
 
         // STAYS IN DISPLAY
-        const t = program_state.animation_time;
+        const t = program_state.animation_time / 1000;
         const gl = context.context;
 
         // STAYS IN DISPLAY
         if (!this.init_ok) {
             const ext = gl.getExtension('WEBGL_depth_texture');
             if (!ext) {
-                return alert('need WEBGL_depth_texture');
+                return alert('need WEBGL_depth_texture');  // eslint-disable-line
             }
             this.texture_buffer_init(gl);
+
             this.init_ok = true;
         }
+
+        let sun_y = this.sun_y;
+        this.sun_y = Math.abs(20 * Math.sin(t/3 + Math.PI/2));
+        let sun_x = this.sun_x;
+        this.sun_x = 35 * Math.sin(t/3);
+        this.light_position = vec4(this.sun_x, this.sun_y, -45, 1);
+        // The color of the light
+        this.light_color = color(
+            0.667 + Math.sin(t/500) / 3,
+            0.667 + Math.sin(t/1500) / 3,
+            0.667 + Math.sin(t/3500) / 3,
+            1
+        );
 
         program_state.projection_transform = Mat4.perspective(
             Math.PI / 4, context.width / context.height, .1, 1000);
@@ -620,7 +638,11 @@ export class Assignment3 extends Scene {
         }
 
         // Step 1: set the perspective and camera to the POV of light
-        const light_view_mat = Mat4.look_at(this.light_position, this.light_view_target, vec3(0, 1, 0));
+        const light_view_mat = Mat4.look_at(
+            vec3(this.light_position[0], this.light_position[1], this.light_position[2]),
+            vec3(this.light_view_target[0], this.light_view_target[1], this.light_view_target[2]),
+            vec3(0, 1, 0), // assume the light to target will have a up dir of +y, maybe need to change according to your case
+        );
         const light_proj_mat = Mat4.perspective(this.light_field_of_view, 1, 0.5, 500);
         // Bind the Depth Texture Buffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.lightDepthFramebuffer);
@@ -640,14 +662,6 @@ export class Assignment3 extends Scene {
         program_state.view_mat = program_state.camera_inverse;
         program_state.projection_transform = Mat4.perspective(Math.PI / 4, context.width / context.height, 0.5, 500);
         this.render_scene(context, program_state, true,true, true);
-
-        // Step 3: display the textures
-        this.shapes.square_2d.draw(context, program_state,
-            Mat4.translation(-.99, .08, 0).times(
-                Mat4.scale(0.5, 0.5 * gl.canvas.width / gl.canvas.height, 1)
-            ),
-            this.depth_tex.override({texture: this.lightDepthTexture})
-        );
     }
 }
 
