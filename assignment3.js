@@ -495,30 +495,20 @@ export class Assignment3 extends Scene {
         this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
 
 
-        if (!this.hover) {
-            if (this.isDay) {
-                if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
-                    //this.isDay = !this.isDay;
-                }
-            }
-            else if (this.isAfternoon) {
-                if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
-                    //this.isAfternoon = !this.isAfternoon;
-                }
-            }
-            else if (this.isNight) {
-                if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
-                    //this.isNight = !this.isNight;
-
-                }
-            } else {
-                if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
-                }
-            }
+        if (this.isDay) {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
+        }
+        else if (this.isAfternoon)
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
+        }
+        else if (this.isNight)
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
+        }
+        else
+        {
+            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
         }
 
         // camera positions
