@@ -64,6 +64,11 @@ export class Assignment3 extends Scene {
                 color: hex_color("#000000"),
                 ambient: 1,
                 texture: new Texture("assets/resized-image-Promo-3.jpeg", "NEAREST")}),
+
+            moving_sunset: new Material(new defs.Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1,
+                texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
             
             ground: new Material(new defs.Textured_Phong(), {color: hex_color("#000000"), specularity: 1, ambient: 1, texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
 
@@ -214,9 +219,9 @@ export class Assignment3 extends Scene {
         program_state.lights = [new Light(light_position, this.light_color, light_size)];
 
         let sunset_transform = Mat4.identity();
-        sunset_transform = sunset_transform.times(Mat4.translation(0,0,-50))
+        sunset_transform = sunset_transform.times(Mat4.translation(0,0,-105))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(55,30,0));
+            .times(Mat4.scale(55,30,55));
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
@@ -496,39 +501,40 @@ export class Assignment3 extends Scene {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
                 }
             }
-            if (this.isAfternoon) {
+            else if (this.isAfternoon) {
                 if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
                 }
             }
-            if (this.isNight) {
+            else if (this.isNight) {
                 if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
                 }
             } else {
                 if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
+                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
                 }
             }
         }
 
         // camera positions
-        if (this.attached)
-        {
-            if (this.attached() === this.initial_camera_location)
-            {
-                let desired1 = this.initial_camera_location.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-                program_state.set_camera(desired1);
-            }
-            else
-            {
-                let desired = Mat4.inverse(this.attached().times(Mat4.translation(0,1.5,7)));
-                desired = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-                program_state.set_camera(desired);
-            }
-        }
+        // if (this.attached)
+        // {
+        //     if (this.attached() === this.initial_camera_location)
+        //     {
+        //         let desired1 = this.initial_camera_location.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+        //         program_state.set_camera(desired1);
+        //     }
+        //     else
+        //     {
+        //         let desired = Mat4.inverse(this.attached().times(Mat4.translation(0,1.5,7)));
+        //         desired = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+        //         program_state.set_camera(desired);
+        //     }
+        // }
     }
 }
+
 
 class Gouraud_Shader extends Shader {
     // This is a Shader using Phong_Shader as template
