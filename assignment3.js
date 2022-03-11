@@ -8,25 +8,6 @@ const {Cube, Textured_Phong} = defs
 
 export const LIGHT_DEPTH_TEX_SIZE = 2048;
 
-const Square =
-    class Square extends tiny.Vertex_Buffer {
-        constructor() {
-            super("position", "normal", "texture_coord");
-            this.arrays.position = [
-                vec3(0, 0, 0), vec3(1, 0 ,0), vec3(0, 1, 0),
-                vec3(1, 1, 0), vec3(1, 0, 0), vec3(0, 1, 0)
-            ];
-            this.arrays.normal = [
-                vec3(0, 0, 1), vec3(0, 0, 1), vec3(0, 0, 1),
-                vec3(0, 0, 1), vec3(0, 0, 1), vec3(0, 0, 1),
-            ];
-            this.arrays.texture_coord = [
-                vec(0, 0), vec(1, 0), vec(0, 1),
-                vec(1, 1), vec(1, 0), vec(0, 1)
-            ];
-        }
-    }
-
 export class Assignment3 extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
@@ -35,8 +16,6 @@ export class Assignment3 extends Scene {
         this.hover = this.swarm = false;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
-            torus: new defs.Torus(15, 15),
-            torus2: new defs.Torus(3, 15),
             sphere: new defs.Subdivision_Sphere(4),
             circle: new defs.Regular_2D_Polygon(1, 25),
             cube: new defs.Cube(3,3),
@@ -79,15 +58,19 @@ export class Assignment3 extends Scene {
                 ambient: 1,
                 texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
             ground_p: new Material(new defs.Textured_Phong(), {
-                color: hex_color("#000000"),
-                specularity: 1,
-                ambient: 1,
-                texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
+                color: hex_color("#111111"),
+                specularity: 0.6,
+                ambient: 0.3,
+                diffusivity: 0.6,
+                color_texture: new Texture("assets/grasstxt.jpeg")}),
             ground_s: new Material(new Shadow_Textured_Phong_Shader(), {
-                color: hex_color("#000000"),
-                specularity: 1,
-                ambient: 1,
-                texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
+                color: hex_color("#111111"),
+                specularity: 0.6,
+                ambient: 0.3,
+                diffusivity: 0.6,
+                color_texture: new Texture("assets/grasstxt.jpeg"),
+                light_depth_texture: null
+            }),
             building_material: new Material(new defs.Textured_Phong(), {
                 ambient: 1,
                 specularity: 1,
@@ -104,17 +87,20 @@ export class Assignment3 extends Scene {
                 color: hex_color("#1e1c1c"),
                 texture: new Texture("assets/roses_edit.jpg", "NEAREST")}),
             dirt_s: new Material(new Shadow_Textured_Phong_Shader(), {
-                ambient: 1,
-                specularity: 1,
-                color: hex_color("#000000"),
-                texture: new Texture("assets/dirt_resized.jpeg", "NEAREST")}),
+                color: hex_color("#111111"),
+                specularity: 0.6,
+                ambient: 0.3,
+                diffusivity: 0.6,
+                color_texture: new Texture("assets/dirt_resized.jpeg", "NEAREST"),
+                light_depth_texture: null}),
             dirt_p: new Material(new defs.Textured_Phong(), {
-                ambient: 1,
-                specularity: 1,
-                color: hex_color("#000000"),
-                texture: new Texture("assets/dirt_resized.jpeg", "NEAREST")}),
+                color: hex_color("#111111"),
+                specularity: 0.6,
+                ambient: 0.3,
+                diffusivity: 0.6,
+                color_texture: new Texture("assets/dirt_resized.jpeg", "NEAREST")}),
             light_source: new Material(new defs.Phong_Shader(), {
-                color: hex_color("#edb0ff"),
+                color: hex_color("#111111"),
                 ambient: 1,
                 diffusivity: 0,
                 specularity: 0}),
@@ -124,6 +110,18 @@ export class Assignment3 extends Scene {
                 diffusivity: 0,
                 specularity: 0})
         }
+        // For the floor or other plain objects
+        this.floor1 = new Material(new Shadow_Textured_Phong_Shader(1), {
+            color: color(1, 1, 1, 1), ambient: .3, diffusivity: 0.6, specularity: 0.4, smoothness: 64,
+            color_texture: new Texture("assets/grasstxt.jpeg"),
+            light_depth_texture: null
+        })
+// For the floor or other plain objects
+        this.floor2 = new Material(new Shadow_Textured_Phong_Shader(1), {
+            color: color(1, 1, 1, 1), ambient: .3, diffusivity: 0.6, specularity: 0.4, smoothness: 64,
+            color_texture: new Texture("assets/dirt.jpg"),
+            light_depth_texture: null
+        })
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 0, 17), vec3(0, 0, 0), vec3(0, 1, 0));
 
@@ -179,9 +177,10 @@ export class Assignment3 extends Scene {
         // Depth Texture
         this.lightDepthTexture = gl.createTexture();
         // Bind it to TinyGraphics
-        // this.light_depth_texture = new Buffered_Texture(this.lightDepthTexture);
-        // this.stars.light_depth_texture = this.light_depth_texture
-        // this.floor.light_depth_texture = this.light_depth_texture
+        this.light_depth_texture = new Buffered_Texture(this.lightDepthTexture);
+        this.floor1.light_depth_texture = this.light_depth_texture;
+        this.floor2.light_depth_texture = this.light_depth_texture;
+        this.materials.dirt_s.light_depth_texture = this.light_depth_texture;
 
         this.lightDepthTextureSize = LIGHT_DEPTH_TEX_SIZE;
         gl.bindTexture(gl.TEXTURE_2D, this.lightDepthTexture);
@@ -274,14 +273,14 @@ export class Assignment3 extends Scene {
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0))
             .times(Mat4.rotation(Math.PI/2, 1, 0, 0))
             .times(Mat4.scale(30,30,100));
-        this.shapes.square.draw(context, program_state, ground_transform, shadow_pass? this.materials.ground_s : this.materials.ground_p);
+        this.shapes.square.draw(context, program_state, ground_transform, shadow_pass? this.floor1 : this.materials.ground_p);
 
         // path on the ground
         let path_transform = Mat4.identity();
         path_transform = path_transform.times(Mat4.translation(0,-3.9,0))
             .times(Mat4.rotation(Math.PI/2, 1, 0, 0))
             .times(Mat4.scale(4, 14, 0));
-        this.shapes.square2.draw(context, program_state, path_transform, shadow_pass? this.materials.dirt_s : this.materials.dirt_p);
+        this.shapes.square2.draw(context, program_state, path_transform, shadow_pass? this.floor2 : this.materials.dirt_p);
 
         // sunset
         let sunset_transform = Mat4.identity();
@@ -574,12 +573,6 @@ export class Assignment3 extends Scene {
 
     display(context, program_state) {
         // display():  Called once per frame of animation.
-        // Setup -- This part sets up the scene's overall camera matrix, projection matrix, and lights:
-        if (!context.scratchpad.controls) {
-            this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
-            // Define the global camera and projection matrices, which are stored in program_state.
-            program_state.set_camera(this.initial_camera_location);
-        }
 
         // STAYS IN DISPLAY
         const t = program_state.animation_time / 1000;
@@ -596,6 +589,14 @@ export class Assignment3 extends Scene {
             this.init_ok = true;
         }
 
+        // Setup -- This part sets up the scene's overall camera matrix, projection matrix, and lights:
+        if (!context.scratchpad.controls) {
+            this.children.push(context.scratchpad.controls = new defs.Movement_Controls());
+            // Define the global camera and projection matrices, which are stored in program_state.
+            program_state.set_camera(this.initial_camera_location);
+        }
+
+
         let sun_y = this.sun_y;
         this.sun_y = Math.abs(20 * Math.sin(t/3 + Math.PI/2));
         let sun_x = this.sun_x;
@@ -609,13 +610,12 @@ export class Assignment3 extends Scene {
             1
         );
 
-        program_state.projection_transform = Mat4.perspective(
-            Math.PI / 4, context.width / context.height, .1, 1000);
+        // program_state.projection_transform = Mat4.perspective(
+        //     Math.PI / 4, context.width / context.height, .1, 1000);
 
-        const light_size = this.sun_rad ** 30;
         this.light_view_target = vec4(0, 0, 0, 1);
-        this.light_field_of_view = 360 * Math.PI / 180;
-        program_state.lights = [new Light(this.light_position, this.light_color, light_size)];
+        this.light_field_of_view = 130  * Math.PI / 180;
+        program_state.lights = [new Light(this.light_position, this.light_color, 1000)];
 
         // camera positions
         if (this.attached)
@@ -637,7 +637,7 @@ export class Assignment3 extends Scene {
         const light_view_mat = Mat4.look_at(
             vec3(this.light_position[0], this.light_position[1], this.light_position[2]),
             vec3(this.light_view_target[0], this.light_view_target[1], this.light_view_target[2]),
-            vec3(0, 1, 0), // assume the light to target will have a up dir of +y, maybe need to change according to your case
+            vec3(1, 0, 0), // assume the light to target will have a up dir of +y, maybe need to change according to your case
         );
         const light_proj_mat = Mat4.perspective(this.light_field_of_view, 1, 0.5, 500);
         // Bind the Depth Texture Buffer
