@@ -518,20 +518,20 @@ export class Assignment3 extends Scene {
         }
 
         // camera positions
-        // if (this.attached)
-        // {
-        //     if (this.attached() === this.initial_camera_location)
-        //     {
-        //         let desired1 = this.initial_camera_location.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-        //         program_state.set_camera(desired1);
-        //     }
-        //     else
-        //     {
-        //         let desired = Mat4.inverse(this.attached().times(Mat4.translation(0,1.5,7)));
-        //         desired = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
-        //         program_state.set_camera(desired);
-        //     }
-        // }
+        if (this.attached)
+        {
+            if (this.attached() === this.initial_camera_location)
+            {
+                let desired1 = this.initial_camera_location.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+                program_state.set_camera(desired1);
+            }
+            else
+            {
+                let desired = Mat4.inverse(this.attached().times(Mat4.translation(0,1.5,7)));
+                desired = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+                program_state.set_camera(desired);
+            }
+        }
     }
 }
 
