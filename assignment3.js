@@ -219,9 +219,9 @@ export class Assignment3 extends Scene {
         program_state.lights = [new Light(light_position, this.light_color, light_size)];
 
         let sunset_transform = Mat4.identity();
-        sunset_transform = sunset_transform.times(Mat4.translation(0,0,-105))
+        sunset_transform = sunset_transform.times(Mat4.translation(0,0,-50))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(55,30,55));
+            .times(Mat4.scale(55,30,0));
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
@@ -499,16 +499,20 @@ export class Assignment3 extends Scene {
             if (this.isDay) {
                 if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
+                    //this.isDay = !this.isDay;
                 }
             }
             else if (this.isAfternoon) {
                 if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
+                    //this.isAfternoon = !this.isAfternoon;
                 }
             }
             else if (this.isNight) {
                 if (!this.hover) {
                     this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
+                    //this.isNight = !this.isNight;
+
                 }
             } else {
                 if (!this.hover) {
