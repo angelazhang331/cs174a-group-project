@@ -70,7 +70,11 @@ export class Assignment3 extends Scene {
                 ambient: 1,
                 texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
             
-            ground: new Material(new defs.Textured_Phong(), {color: hex_color("#000000"), specularity: 1, ambient: 1, texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
+            ground: new Material(new defs.Textured_Phong(), {
+                color: hex_color("#262626"),
+                specularity: 1,
+                ambient: 1,
+                texture: new Texture("assets/grasstxt.jpeg", "NEAREST")}),
 
             building_material: new Material(new defs.Textured_Phong(), {
                 ambient: 1,
