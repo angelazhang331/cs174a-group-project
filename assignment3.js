@@ -65,7 +65,7 @@ export class Assignment3 extends Scene {
                 ambient: 1,
                 texture: new Texture("assets/resized-image-Promo-3.jpeg", "NEAREST")}),
 
-            moving_sunset: new Material(new defs.Textured_Phong(), {
+            moving_sunset: new Material(new Texture_Scroll_X(), {
                 color: hex_color("#000000"),
                 ambient: 1,
                 texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
@@ -508,7 +508,6 @@ export class Assignment3 extends Scene {
         this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
 
 
-<<<<<<< HEAD
         if (this.isDay) {
             this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
         }
@@ -524,33 +523,6 @@ export class Assignment3 extends Scene {
         {
             this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
         }
-=======
-        //if (!this.hover) {
-            if (this.isDay) {
-                //if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
-                    //this.isDay = !this.isDay;
-                //}
-            }
-            else if (this.isAfternoon) {
-                //if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
-                    //this.isAfternoon = !this.isAfternoon;
-                //}
-            }
-            else if (this.isNight) {
-                //if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
-                    //this.isNight = !this.isNight;
-
-                //}
-            } else {
-                //if (!this.hover) {
-                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.moving_sunset);
-                //}
-            }
-       // }
->>>>>>> 41a8ab093d9caeae1159f66012a50a2e853f880a
 
         // camera positions
         if (this.attached)
@@ -570,6 +542,29 @@ export class Assignment3 extends Scene {
     }
 }
 
+class Texture_Scroll_X extends Textured_Phong {
+    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #6.
+    fragment_glsl_code() {
+        return this.shared_glsl_code() + `
+            varying vec2 f_tex_coord;
+            uniform sampler2D texture;
+            uniform float animation_time;
+            
+            void main(){
+                // Sample the texture image in the correct place:
+                vec4 tex_color_coord = vec4(f_tex_coord, 0.0, 1.0);
+                vec2 tex_color_coord2 = vec2(tex_color_coord.x, tex_color_coord.y + mod(-2.*animation_time, 1.0));
+
+                vec4 tex_color = texture2D( texture, tex_color_coord2);
+                
+                if( tex_color.w < .01 ) discard;
+                                                                         // Compute an initial (ambient) color:
+                gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                         // Compute the final color with contributions from lights:
+                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+        } `;
+    }
+}
 
 class Gouraud_Shader extends Shader {
     // This is a Shader using Phong_Shader as template
