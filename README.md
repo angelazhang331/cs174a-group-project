@@ -2,7 +2,7 @@
 
 Muthu Palaniappan, 005292734 <br>
 Sabrina Nguyen, <br>
-Angela Zhang, <br>
+Angela Zhang, 405317676 <br>
 
 
 For our project, we decided to make a sunset scene over Royce Hall. 
