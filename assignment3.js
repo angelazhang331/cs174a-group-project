@@ -79,7 +79,7 @@ export class Assignment3 extends Scene {
                 ambient: 1,
                 texture: new Texture("assets/sunset.jpg", "LINEAR_MIPMAP_LINEAR")}),
         }
-
+      
         // For the first pass
         this.pure = new Material(new Color_Phong_Shader(), {
         })
