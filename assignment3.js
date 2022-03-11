@@ -597,16 +597,16 @@ export class Assignment3 extends Scene {
         let sun_x = this.sun_x;
         this.sun_x = 35 * Math.sin(t/3);
         if (this.isDay) {
-            this.light_position = vec4(35 * Math.sin(12/3), Math.abs(20 * Math.sin(12/3 + Math.PI/2)), -45, 1);
+            this.light_position = vec4(35 * Math.sin(12/3), Math.abs(20 * Math.sin(12/3 + Math.PI/2)), -40, 1);
         }
         else if (this.isAfternoon) {
-            this.light_position = vec4(35 * Math.sin(9/3), Math.abs(20 * Math.sin(9/3 + Math.PI/2)), -45, 1);
+            this.light_position = vec4(35 * Math.sin(9/3), Math.abs(20 * Math.sin(9/3 + Math.PI/2)), -40, 1);
         }
         else if (this.isNight) {
-            this.light_position = vec4(35 * Math.sin(6/3), Math.abs(20 * Math.sin(6/3 + Math.PI/2)), -45, 1);
+            this.light_position = vec4(35 * Math.sin(6/3), Math.abs(20 * Math.sin(6/3 + Math.PI/2)), -40, 1);
         }
         else {
-            this.light_position = vec4(this.sun_x, this.sun_y, -45, 1);
+            this.light_position = vec4(this.sun_x, this.sun_y, -40, 1);
         }
         // The color of the light
         this.light_color = hex_color("#fac91a");
