@@ -4,6 +4,8 @@ const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture,
 } = tiny;
 
+const {Cube, Axis_Arrows, Textured_Phong} = defs
+
 
 export class Assignment3 extends Scene {
     constructor() {
@@ -24,7 +26,7 @@ export class Assignment3 extends Scene {
 
         this.shapes.cube.arrays.texture_coord.forEach(v => v.scale_by(1));
         this.shapes.square.arrays.texture_coord.forEach(v => v.scale_by(8));
-        this.shapes.cube2.arrays.texture_coord.forEach(v => v.scale_by(-3.5));
+        this.shapes.cube2.arrays.texture_coord.forEach(v => v.scale_by(-1));
 
         // *** Materials
         this.materials = {
@@ -65,10 +67,10 @@ export class Assignment3 extends Scene {
                 color: hex_color("#000000"),
                 texture: new Texture("assets/brks.jpg", "NEAREST")
             }),
-            building_material2: new Material(new defs.Textured_Phong(), {
+            building_material2: new Material(new Texture_Rotate(), {
                 ambient: 1,
                 specularity: 1,
-                color: hex_color("#000000"),
+                color: hex_color("#1e1c1c"),
                 texture: new Texture("assets/brks.jpeg", "NEAREST")
             }),
 
@@ -434,3 +436,58 @@ class Ring_Shader extends Shader {
         }`;
     }
 }
+
+class Texture_Rotate extends Textured_Phong {
+    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #7.
+    fragment_glsl_code() {
+        return this.shared_glsl_code() + `
+            varying vec2 f_tex_coord;
+            uniform sampler2D texture;
+            uniform float animation_time;
+            void main(){
+                // Sample the texture image in the correct place:
+                // for step 7: get the mod then multiply by pi / 2
+                float scale_factor = (animation_time);
+                // 15rpm = 30 * pi / 60 sec
+                float pi = 3.1415;
+                float angle = 0.5 * scale_factor * pi * -1.0;
+                mat2 rotation_matrix = mat2( 
+                cos(angle), sin(angle), 
+                -sin(angle), cos(angle) 
+                );
+                
+                vec2 rotated_tex_coord = f_tex_coord;
+                rotated_tex_coord.x = rotated_tex_coord.x - 0.5; 
+                rotated_tex_coord.y = rotated_tex_coord.y - 0.5; 
+                rotated_tex_coord = rotation_matrix * rotated_tex_coord;
+                rotated_tex_coord.x = rotated_tex_coord.x + 0.5; 
+                rotated_tex_coord.y = rotated_tex_coord.y + 0.5;
+                
+                float u = mod(rotated_tex_coord.x, 1.0);
+                float v = mod(rotated_tex_coord.y, 1.0);
+                
+                
+                vec4 tex_color;
+                
+                if ((v > 0.0 && v < 0.83 && (u > 0.15 && u < 0.27 || u > 0.45 && u < 0.57 || u > 0.75 && u < 0.87) )) {
+                    // if ((v > 0.0 && v < 0.85 && u > 0.35 && u < 0.75)){
+                        tex_color = vec4(0, 0, 0, 1.0);
+                    // }
+                    // else{
+                    //    
+                    //     tex_color = texture2D( texture, rotated_tex_coord);
+                    // }
+                }
+                else {
+                   tex_color = texture2D( texture, rotated_tex_coord);
+                }
+                
+                if( tex_color.w < .01 ) discard;
+                                                                         // Compute an initial (ambient) color:
+                gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                         // Compute the final color with contributions from lights:
+                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+        } `;
+    }
+}
+
