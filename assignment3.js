@@ -12,6 +12,7 @@ export class Assignment3 extends Scene {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
 
+        this.hover = this.swarm = false;
         // At the beginning of our program, load one of each of these shape definitions onto the GPU.
         this.shapes = {
             torus: new defs.Torus(15, 15),
@@ -102,56 +103,72 @@ export class Assignment3 extends Scene {
 
     }
 
-    getGradientColor = function(start_color, end_color, percent) {
-        // strip the leading # if it's there
-        start_color = start_color.replace(/^\s*#|\s*$/g, '');
-        end_color = end_color.replace(/^\s*#|\s*$/g, '');
-
-        // convert 3 char codes --> 6, e.g. `E0F` --> `EE00FF`
-        if(start_color.length == 3){
-            start_color = start_color.replace(/(.)/g, '$1$1');
-        }
-
-        if(end_color.length == 3){
-            end_color = end_color.replace(/(.)/g, '$1$1');
-        }
-
-        // get colors
-        var start_red = parseInt(start_color.substr(0, 2), 16),
-            start_green = parseInt(start_color.substr(2, 2), 16),
-            start_blue = parseInt(start_color.substr(4, 2), 16);
-
-        var end_red = parseInt(end_color.substr(0, 2), 16),
-            end_green = parseInt(end_color.substr(2, 2), 16),
-            end_blue = parseInt(end_color.substr(4, 2), 16);
-
-        // calculate new color
-        var diff_red = end_red - start_red;
-        var diff_green = end_green - start_green;
-        var diff_blue = end_blue - start_blue;
-
-        diff_red = ( (diff_red * percent) + start_red ).toString(16).split('.')[0];
-        diff_green = ( (diff_green * percent) + start_green ).toString(16).split('.')[0];
-        diff_blue = ( (diff_blue * percent) + start_blue ).toString(16).split('.')[0];
-
-        // ensure 2 digits by color
-        if( diff_red.length == 1 ) diff_red = '0' + diff_red
-        if( diff_green.length == 1 ) diff_green = '0' + diff_green
-        if( diff_blue.length == 1 ) diff_blue = '0' + diff_blue
-
-        return '#' + diff_red + diff_green + diff_blue;
-    };
+    // getGradientColor = function(start_color, end_color, percent) {
+    //     // strip the leading # if it's there
+    //     start_color = start_color.replace(/^\s*#|\s*$/g, '');
+    //     end_color = end_color.replace(/^\s*#|\s*$/g, '');
+    //
+    //     // convert 3 char codes --> 6, e.g. `E0F` --> `EE00FF`
+    //     if(start_color.length == 3){
+    //         start_color = start_color.replace(/(.)/g, '$1$1');
+    //     }
+    //
+    //     if(end_color.length == 3){
+    //         end_color = end_color.replace(/(.)/g, '$1$1');
+    //     }
+    //
+    //     // get colors
+    //     var start_red = parseInt(start_color.substr(0, 2), 16),
+    //         start_green = parseInt(start_color.substr(2, 2), 16),
+    //         start_blue = parseInt(start_color.substr(4, 2), 16);
+    //
+    //     var end_red = parseInt(end_color.substr(0, 2), 16),
+    //         end_green = parseInt(end_color.substr(2, 2), 16),
+    //         end_blue = parseInt(end_color.substr(4, 2), 16);
+    //
+    //     // calculate new color
+    //     var diff_red = end_red - start_red;
+    //     var diff_green = end_green - start_green;
+    //     var diff_blue = end_blue - start_blue;
+    //
+    //     diff_red = ( (diff_red * percent) + start_red ).toString(16).split('.')[0];
+    //     diff_green = ( (diff_green * percent) + start_green ).toString(16).split('.')[0];
+    //     diff_blue = ( (diff_blue * percent) + start_blue ).toString(16).split('.')[0];
+    //
+    //     // ensure 2 digits by color
+    //     if( diff_red.length == 1 ) diff_red = '0' + diff_red
+    //     if( diff_green.length == 1 ) diff_green = '0' + diff_green
+    //     if( diff_blue.length == 1 ) diff_blue = '0' + diff_blue
+    //
+    //     return '#' + diff_red + diff_green + diff_blue;
+    // };
 
     make_control_panel() {
         // Draw the scene's buttons, setup their actions and keyboard shortcuts, and monitor live measurements.
-        this.key_triggered_button("View solar system", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
+        this.key_triggered_button("View entire scene", ["Control", "0"], () => this.attached = () => this.initial_camera_location);
         this.new_line();
-        this.key_triggered_button("Day", ["Control", "d"], () => this.isDay = !this.isDay);
+        this.key_triggered_button("Day", ["Control", "d"], () => {this.isDay = !this.isDay});
         this.new_line();
-        this.key_triggered_button("Afternoon", ["Control", "a"], () => this.isAfternoon = !this.isAfternoon);
+        this.key_triggered_button("Afternoon", ["Control", "a"], () => {this.isAfternoon = !this.isAfternoon});
         this.new_line();
-        this.key_triggered_button("Night", ["Control", "n"], () => this.isNight = !this.isNight);
+        this.key_triggered_button("Night", ["Control", "n"], () => {this.isNight = !this.isNight});
         this.new_line();
+        this.key_triggered_button("Attach to plant 1", ["Control", "1"], () => this.attached = () => this.plant_1);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 2", ["Control", "2"], () => this.attached = () => this.plant_2);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 3", ["Control", "3"], () => this.attached = () => this.plant_3);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 4", ["Control", "4"], () => this.attached = () => this.plant_4);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 5", ["Control", "5"], () => this.attached = () => this.plant_5);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 6", ["Control", "6"], () => this.attached = () => this.plant_6);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 7", ["Control", "7"], () => this.attached = () => this.plant_7);
+        // this.new_line();
+        this.key_triggered_button("Attach to plant 8", ["Control", "8"], () => this.attached = () => this.plant_8);
+        // this.new_line();
     }
 
     display(context, program_state) {
@@ -200,23 +217,6 @@ export class Assignment3 extends Scene {
         sunset_transform = sunset_transform.times(Mat4.translation(0,0,-50))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
             .times(Mat4.scale(55,30,0));
-
-        if (this.isDay)
-        {
-            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
-        }
-        else if (this.isAfternoon)
-        {
-            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
-        }
-        else if (this.isNight)
-        {
-            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
-        }
-        else
-        {
-            this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
-        }
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
@@ -274,6 +274,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         let plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(-9.5,-3.5,1.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_1 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         let plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(-8.7,-3.5,2.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -285,6 +286,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(6.5,-3.5,1.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_2 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(5.7,-3.5,2.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -296,6 +298,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(9.5,-3.5,9.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_3 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(8.7,-3.5,10.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -307,6 +310,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(14.5,-3.5,-4.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_4 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(15.3,-3.5,-5.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -318,6 +322,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(-14.5,-3.5,-4.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_5 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(-15.3,-3.5,-5.1)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -329,6 +334,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(-9.5,-3.5,-6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_6 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(-8.7,-3.5,-5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -340,6 +346,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(-14.5,-3.5,6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_7 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(-13.7,-3.5,5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -351,6 +358,7 @@ export class Assignment3 extends Scene {
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform2 = Mat4.identity();
         plant_transform = plant_transform2.times(Mat4.translation(14.5,-3.5,6.5)).times(Mat4.scale(1.7*plant_rad,1.7*plant_rad,1.7*plant_rad));
+        this.plant_8 = plant_transform;
         this.shapes.plant.draw(context, program_state, plant_transform, this.materials.plant_material);
         plant_transform3 = Mat4.identity();
         plant_transform = plant_transform3.times(Mat4.translation(13.7,-3.5,5.9)).times(Mat4.scale(plant_rad,plant_rad,plant_rad));
@@ -482,6 +490,43 @@ export class Assignment3 extends Scene {
         this.shapes.circle.draw(context, program_state, column_transform, this.materials.test);
 
 
+        if (!this.hover) {
+            if (this.isDay) {
+                if (!this.hover) {
+                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.day);
+                }
+            }
+            if (this.isAfternoon) {
+                if (!this.hover) {
+                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.afternoon);
+                }
+            }
+            if (this.isNight) {
+                if (!this.hover) {
+                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.night);
+                }
+            } else {
+                if (!this.hover) {
+                    this.shapes.cube.draw(context, program_state, sunset_transform, this.materials.sunset);
+                }
+            }
+        }
+
+        // camera positions
+        if (this.attached)
+        {
+            if (this.attached() === this.initial_camera_location)
+            {
+                let desired1 = this.initial_camera_location.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+                program_state.set_camera(desired1);
+            }
+            else
+            {
+                let desired = Mat4.inverse(this.attached().times(Mat4.translation(0,1.5,7)));
+                desired = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, 0.1));
+                program_state.set_camera(desired);
+            }
+        }
     }
 }
 
