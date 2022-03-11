@@ -255,12 +255,7 @@ export class Assignment3 extends Scene {
 
         let light_position = this.light_position;
         this.light_position = vec4(sun_x, sun_y, -45, 1);
-        this.light_color = color(
-            1.667 + Math.sin(time/500) / 3,
-            1.667 + Math.sin(time/1500) / 3,
-            0.667 + Math.sin(time/3500) / 3,
-            1
-        );
+        this.light_color = hex_color("#fac91a");
 
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
 
@@ -270,7 +265,7 @@ export class Assignment3 extends Scene {
         if (draw_light_source && shadow_pass) {
             let draw_transform = Mat4.identity();
             draw_transform = draw_transform.times(Mat4.translation(light_position[0], light_position[1], light_position[2]))
-                .times(Mat4.scale(.5,.5,.5));
+                .times(Mat4.scale(4,4,4));
             this.shapes.sphere.draw(context, program_state, draw_transform, this.materials.light_source.override({color: this.light_color}));
         }
 
@@ -313,11 +308,12 @@ export class Assignment3 extends Scene {
         let sun_rad = this.sun_rad;
         this.sun_rad = 4;
 
-        const sun_color = hex_color("#fac91a");
-        let model_transform_sun = Mat4.identity();
-        model_transform_sun = model_transform_sun.times(Mat4.translation(sun_x, sun_y, -45))
-            .times(Mat4.scale(sun_rad, sun_rad, sun_rad));
-        this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
+        // const sun_color = hex_color("#fac91a");
+        // let model_transform_sun = Mat4.identity();
+        // model_transform_sun = model_transform_sun.times(Mat4.translation(sun_x, sun_y, -45))
+        //     .times(Mat4.scale(sun_rad, sun_rad, sun_rad));
+        // this.shapes.sun.draw(context, program_state, model_transform_sun, this.materials.sun_material.override({color: sun_color}));
+
 
         // putting together royce
         let column1_transform = Mat4.identity();
@@ -618,7 +614,7 @@ export class Assignment3 extends Scene {
 
         const light_size = this.sun_rad ** 30;
         this.light_view_target = vec4(0, 0, 0, 1);
-        this.light_field_of_view = 130 * Math.PI / 180;
+        this.light_field_of_view = 360 * Math.PI / 180;
         program_state.lights = [new Light(this.light_position, this.light_color, light_size)];
 
         // camera positions
