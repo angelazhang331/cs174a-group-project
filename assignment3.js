@@ -198,11 +198,11 @@ export class Assignment3 extends Scene {
         let sunset_transform = Mat4.identity();
         sunset_transform = sunset_transform.times(Mat4.translation(0,0,-50))
             .times(Mat4.rotation(Math.PI, 1, 0, 0))
-            .times(Mat4.scale(55,30,0));
+            .times(Mat4.scale(65,45,0));
 
         let ground_transform = Mat4.identity();
         ground_transform = ground_transform.times(Mat4.translation(0,-4,0)).times(Mat4.rotation(Math.PI/2, 1, 0, 0))
-            .times(Mat4.scale(30,30,100));
+            .times(Mat4.scale(45,30,100));
         this.shapes.square.draw(context, program_state, ground_transform, this.materials.ground);
 
         // let ground_transform2 = Mat4.identity();
